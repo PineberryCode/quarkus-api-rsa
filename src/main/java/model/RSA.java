@@ -2,6 +2,7 @@ package model;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
@@ -29,14 +30,26 @@ import javax.crypto.NoSuchPaddingException;
 import lombok.Getter;
 import lombok.Setter;
 
-@Getter
-@Setter
+/*@Getter
+@Setter*/
 public class RSA {
 
-    private PrivateKey KEY_PRIVATE;
-    private PublicKey KEY_PUBLIC;
+    private static RSA instance;
 
-    public RSA() {}
+    private PrivateKey KEY_PRIVATE;
+
+    private static String name_file = "rsa".concat(".pri");
+    private static String __dirname__ = System.getProperty("user.dir");
+    public static String path_file = __dirname__.concat("/src/main/resources/"+name_file);
+
+    private RSA() {}
+
+    public static RSA getInstance() {
+        if (instance == null) {
+            instance = new RSA ();
+        }
+        return instance;
+    }
 
     protected String bytesToString(byte[] byt) {
         byte[] secondByt = new byte[byt.length+1];
@@ -50,7 +63,7 @@ public class RSA {
         return Arrays.copyOfRange(secondByt, 1, secondByt.length);
     }
 
-    public void setPrivateKey (String key) {
+    private void setPrivateKey (String key) {
         try {
             byte[] privateKeyEncoded = stringToBytes(key);
             KeyFactory keyFactory = KeyFactory.getInstance("RSA");
@@ -62,26 +75,9 @@ public class RSA {
         }
     }
 
-    public void setPublicKey (String key) {
-        try {
-            byte[] publicKeyEncoded = stringToBytes(key);
-            KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-            X509EncodedKeySpec x509 = new X509EncodedKeySpec(publicKeyEncoded);
-            PublicKey publicKey = keyFactory.generatePublic(x509);
-            this.KEY_PUBLIC = publicKey;
-        } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
-            e.printStackTrace();
-        }
-    }
-
     public String getPrivateKeyString () {
         PKCS8EncodedKeySpec pkcs8 = new PKCS8EncodedKeySpec(this.KEY_PRIVATE.getEncoded());
         return bytesToString(pkcs8.getEncoded());
-    }
-
-    public String getPublicKeyString () {
-        X509EncodedKeySpec x509 = new X509EncodedKeySpec(this.KEY_PUBLIC.getEncoded());
-        return bytesToString(x509.getEncoded());
     }
 
     public void genKeyPair (int size) throws NoSuchAlgorithmException,
@@ -94,34 +90,43 @@ public class RSA {
         keyPairGenerator.initialize(size, random);
         KeyPair keyPair = keyPairGenerator.genKeyPair();
     
-        PublicKey publicKey = keyPair.getPublic();
         PrivateKey privateKey = keyPair.getPrivate();
 
         this.KEY_PRIVATE = privateKey;
-        this.KEY_PUBLIC = publicKey;
     }
 
-    public String Encrypt (String str) throws NoSuchAlgorithmException, NoSuchPaddingException, 
-                                        InvalidKeyException, IllegalBlockSizeException, 
-                                        BadPaddingException {
-        byte[] bytesEncrypted;
+    public void saveToFilePrivateKey (String path) {
+        try (Writer writer = new BufferedWriter(
+            new OutputStreamWriter(
+                new FileOutputStream(path), "UTF-8"))) {
+            writer.write(this.getPrivateKeyString());
+        } catch (IOException e) {e.printStackTrace();}
+    }
 
-        Cipher cipher = Cipher.getInstance("RSA");
-        cipher.init(Cipher.ENCRYPT_MODE, this.KEY_PUBLIC);
-        bytesEncrypted = cipher.doFinal(str.getBytes());
+    public void openFromFilePrivateKey (String path) {
+        this.setPrivateKey(this.readingFileAsString(path));
+    }
+
+    private String readingFileAsString (String path) {
+        StringBuffer data = new StringBuffer();
+        try (BufferedReader reader = new BufferedReader (new FileReader(path))) {
         
-        return bytesToString(bytesEncrypted);
+            char[] buffer = new char[1024];
+            int numRead = 0;
+
+            while ((numRead = reader.read(buffer)) != -1) {
+                data.append(String.valueOf(buffer,0,numRead));
+            }
+        } catch (IOException e) {e.printStackTrace();}
+        
+        return data.toString();
     }
 
-    public String Decrypt (String str) throws NoSuchAlgorithmException, NoSuchPaddingException, 
-                                        InvalidKeyException, IllegalBlockSizeException, 
-                                        BadPaddingException {
-        byte[] bytesDecrypted;
+    public boolean isExists () {
+        File validating = new File (path_file);
 
-        Cipher cipher = Cipher.getInstance("RSA");
-        cipher.init(Cipher.DECRYPT_MODE, this.KEY_PRIVATE);
-        bytesDecrypted = cipher.doFinal(stringToBytes(str));
+        boolean status = validating.isFile() ? true : false;
 
-        return new String (bytesDecrypted);
+        return status;
     }
 }

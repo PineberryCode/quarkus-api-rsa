@@ -19,25 +19,28 @@ public class RSAResources {
     private RSA rsa;
 
     public RSAResources () throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException {
-        rsa = new RSA();
-        rsa.genKeyPair(1024);
+        rsa = RSA.getInstance();
+        
+        if (RSA.getInstance().isExists()) {
+            rsa.openFromFilePrivateKey(RSA.path_file);
+        } else {
+            rsa.genKeyPair(1024);
+            rsa.saveToFilePrivateKey(RSA.path_file);
+        }
     }
 
-    @GET
+    /*@GET
     @Path("/pub")
     @Produces("text/plain")
     public String PUBLIC_KEY () throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException {
-        rsa.Encrypt("public");
 
         return rsa.getPublicKeyString();
-    }
+    }*/
 
     @GET
     @Path("/priv")
     @Produces("text/plain")
     public String PRIVATE_KEY () throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException {
-        rsa.Encrypt("private");
-
         return rsa.getPrivateKeyString();
     }
 }
