@@ -1,2 +1,15 @@
 # quarkus-api-rsa
-💫 Quarkus API RSA 🔐✨
+
+Initialize the API with this in your terminal:
+> Linux
+```
+./mvnw quarkus:dev
+```
+or
+```
+./mvnw
+```
+> Windows
+```
+.\mvnw.cmd
+```
