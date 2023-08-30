@@ -29,14 +29,6 @@ public class RSAResources {
         }
     }
 
-    /*@GET
-    @Path("/pub")
-    @Produces("text/plain")
-    public String PUBLIC_KEY () throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException {
-
-        return rsa.getPublicKeyString();
-    }*/
-
     @GET
     @Path("/priv")
     @Produces("text/plain")
