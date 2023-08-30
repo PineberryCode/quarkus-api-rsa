@@ -11,7 +11,6 @@ import javax.crypto.NoSuchPaddingException;
 
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
-import jakarta.ws.rs.core.MediaType;
 import model.RSA;
 
 @Path("/api/v1")

@@ -32,18 +32,9 @@ import lombok.Setter;
 @Getter
 @Setter
 public class RSA {
-    //private String KEY_PUBLIC;
-    //private String KEY_PRIVATE;
-    /*public RSA (String KEY_PUBLIC, String KEY_PRIVATE) {
-        this.KEY_PUBLIC = KEY_PUBLIC;
-        this.KEY_PRIVATE = KEY_PRIVATE;
-    }*/
+
     private PrivateKey KEY_PRIVATE;
     private PublicKey KEY_PUBLIC;
-
-    /*public RSA (String KEY_PRIVATE, String KEY_PUBLIC) {
-        this.KEY_PRIVATE = KEY_PRIVATE;
-    }*/
 
     public RSA() {}
 
@@ -133,49 +124,4 @@ public class RSA {
 
         return new String (bytesDecrypted);
     }
-
-    /*FOR NOW BELOW CORREGNESS*/
-    /*public void saveToDiskPrivateKey(String path) throws IOException {
-        try {
-            Writer out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(path), "UTF-8"));
-            out.write(this.getPrivateKeyString());
-            out.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void saveToDiskPublicKey(String path) {
-        try {
-            Writer out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(path), "UTF-8"));
-            out.write(this.getPublicKeyString());
-            out.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void openFromDiskPublicKey(String path) throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
-        String content = this.readFileAsString(path);
-        this.setPublicKey(content);
-    }
-    
-    public void openFromDiskPrivateKey(String path) throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
-        String content = this.readFileAsString(path);
-        this.setPrivateKey(content);
-    }
-
-    private String readFileAsString(String filePath) throws IOException {
-        StringBuffer fileData = new StringBuffer();
-        BufferedReader reader = new BufferedReader(
-                new FileReader(filePath));
-        char[] buf = new char[1024];
-        int numRead=0;
-        while((numRead=reader.read(buf)) != -1){
-            String readData = String.valueOf(buf, 0, numRead);
-            fileData.append(readData);
-        }
-        reader.close();
-        return fileData.toString();
-    }*/
 }
