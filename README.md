@@ -5,10 +5,6 @@ Initialize the API with this in your terminal:
 ```
 ./mvnw quarkus:dev
 ```
-or
-```
-./mvnw
-```
 > Windows
 ```
 .\mvnw.cmd
