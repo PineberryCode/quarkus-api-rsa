@@ -15,9 +15,11 @@ import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
 import java.util.Arrays;
 
 import javax.crypto.BadPaddingException;
@@ -29,10 +31,13 @@ public class RSA {
     private static RSA instance;
 
     private PrivateKey KEY_PRIVATE;
+    private PublicKey KEY_PUBLIC;
 
-    private static String name_file = "rsa".concat(".pri");
+    private static String name_file_private = "rsa".concat(".pri");
+    private static String name_file_public = "rsa".concat(".pub");
     private static String __dirname__ = System.getProperty("user.dir");
-    public static String path_file = __dirname__.concat("/src/main/resources/"+name_file);
+    public static String path_file_private = __dirname__.concat("/src/main/resources/keys/"+name_file_private);
+    public static String path_file_public = __dirname__.concat("/src/main/resources/keys/"+name_file_public);
 
     private RSA() {}
 
@@ -67,9 +72,26 @@ public class RSA {
         }
     }
 
+    private void setPublicKey (String key) {
+        try {
+            byte[] publicKeyEncoded = stringToBytes(key);
+            KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+            X509EncodedKeySpec x509 = new X509EncodedKeySpec(publicKeyEncoded);
+            PublicKey publicKey = keyFactory.generatePublic(x509);
+            this.KEY_PUBLIC = publicKey;
+        } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+            e.printStackTrace();
+        }
+    }
+
     public String getPrivateKeyString () {
         PKCS8EncodedKeySpec pkcs8 = new PKCS8EncodedKeySpec(this.KEY_PRIVATE.getEncoded());
         return bytesToString(pkcs8.getEncoded());
+    }
+
+    public String getPublicKeyString () {
+        X509EncodedKeySpec x509 = new X509EncodedKeySpec(this.KEY_PUBLIC.getEncoded());
+        return bytesToString(x509.getEncoded());
     }
 
     public void genKeyPair (int size) throws NoSuchAlgorithmException,
@@ -77,26 +99,45 @@ public class RSA {
                                         InvalidKeyException,
                                         IllegalBlockSizeException,
                                         BadPaddingException {
+        //Always generate the two keys: private and public.
         KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
         SecureRandom random = SecureRandom.getInstanceStrong();
         keyPairGenerator.initialize(size, random);
         KeyPair keyPair = keyPairGenerator.genKeyPair();
     
         PrivateKey privateKey = keyPair.getPrivate();
+        PublicKey publicKey = keyPair.getPublic();
 
         this.KEY_PRIVATE = privateKey;
+        this.KEY_PUBLIC = publicKey;
     }
 
     public void saveToFilePrivateKey (String path) {
         try (Writer writer = new BufferedWriter(
             new OutputStreamWriter(
-                new FileOutputStream(path), "UTF-8"))) {
+                new FileOutputStream(path), "UTF-8"
+            )
+        )) {
             writer.write(this.getPrivateKeyString());
+        } catch (IOException e) {e.printStackTrace();}
+    }
+
+    public void saveToFilePublicKey (String path) {
+        try (Writer writer = new BufferedWriter(
+            new OutputStreamWriter(
+                new FileOutputStream(path),"UTF-8"
+            )
+        )) {
+            writer.write(this.getPublicKeyString());
         } catch (IOException e) {e.printStackTrace();}
     }
 
     public void openFromFilePrivateKey (String path) {
         this.setPrivateKey(this.readingFileAsString(path));
+    }
+
+    public void openFromFilePublicKey (String path) {
+        this.setPublicKey(this.readingFileAsString(path));
     }
 
     private String readingFileAsString (String path) {
@@ -115,9 +156,10 @@ public class RSA {
     }
 
     public boolean isExists () {
-        File validating = new File (path_file);
+        /*Could be anything file */
+        File any = new File (path_file_private);
 
-        boolean status = validating.isFile() ? true : false;
+        boolean status = any.isFile() ? true : false;
 
         return status;
     }

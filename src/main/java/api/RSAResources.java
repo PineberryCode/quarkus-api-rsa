@@ -22,10 +22,12 @@ public class RSAResources {
         rsa = RSA.getInstance();
         
         if (RSA.getInstance().isExists()) {
-            rsa.openFromFilePrivateKey(RSA.path_file);
+            rsa.openFromFilePrivateKey(RSA.path_file_private);
+            rsa.openFromFilePublicKey(RSA.path_file_public);
         } else {
             rsa.genKeyPair(1024);
-            rsa.saveToFilePrivateKey(RSA.path_file);
+            rsa.saveToFilePrivateKey(RSA.path_file_private);
+            rsa.saveToFilePublicKey(RSA.path_file_public);
         }
     }
 
@@ -34,5 +36,12 @@ public class RSAResources {
     @Produces("text/plain")
     public String PRIVATE_KEY () throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException {
         return rsa.getPrivateKeyString();
+    }
+
+    @GET
+    @Path("/pub")
+    @Produces("text/plain")
+    public String PUBLIC_KEY () {
+        return rsa.getPublicKeyString();
     }
 }

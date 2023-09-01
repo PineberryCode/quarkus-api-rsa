@@ -43,4 +43,5 @@ nb-configuration.xml
 /.quarkus/cli/plugins/
 
 # API Project
-/src/main/resources/rsa.pri
+/src/main/resources/keys/rsa.pri
+/src/main/resources/keys/rsa.pub
