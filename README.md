@@ -7,5 +7,5 @@ Initialize the API with this in your terminal:
 ```
 > Windows
 ```
-.\mvnw.cmd
+.\mvnw.cmd quarkus:dev
 ```
