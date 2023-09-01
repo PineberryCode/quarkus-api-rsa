@@ -48,14 +48,14 @@ public class RSA {
         return instance;
     }
 
-    protected String bytesToString(byte[] byt) {
+    private String bytesToString(byte[] byt) {
         byte[] secondByt = new byte[byt.length+1];
         secondByt[0] = 1;
         System.arraycopy(byt, 0, secondByt, 1, byt.length);
         return new BigInteger(secondByt).toString(36);
     }
     
-    protected byte[] stringToBytes (String str) {
+    private byte[] stringToBytes (String str) {
         byte[] secondByt = new BigInteger(str,36).toByteArray();
         return Arrays.copyOfRange(secondByt, 1, secondByt.length);
     }
