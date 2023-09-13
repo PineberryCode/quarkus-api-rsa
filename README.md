@@ -18,6 +18,9 @@ quarkus.http.port= PORT
 
 For using this API specifically the use of **keys (Private/Public)**<br><br>
 First, you have to make two *get requests* to the API, one of them for the **private key** and the other for the **public key**:
+<details>
+  <summary><h6>Getting class</h6></summary>
+  
 ```JAVA
 public class Getting {
 
@@ -77,5 +80,52 @@ public class Getting {
         }
         return strBuffer.toString();
     }
+}
+```
+</details>
+
+- - -
+
+Subsequently, You can utilize the **private key** and **public key** storing it in a variable:
+```JAVA
+private String priv = Getting.PRIVATE_KEY();
+private String pub = Getting.PUBLIC_KEY();
+```
+Remember to utilize these variable types **(PublicKey/PrivateKey)** in your class:
+```JAVA
+private PublicKey KEY_PUBLIC;
+private PrivateKey KEY_PRIVATE;
+```
+Now, to encrypt some input:
+```JAVA
+public String Encrypt (String str) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
+        byte[] bytesEncrypted;
+
+        Cipher cipher = Cipher.getInstance("RSA");
+        cipher.init(Cipher.ENCRYPT_MODE, this.KEY_PUBLIC);
+        bytesEncrypted = cipher.doFinal(str.getBytes());
+        
+        return bytesToString(bytesEncrypted);
+}
+
+//Convert bytes to string:
+private String bytesToString(byte[] byt) {
+  byte[] secondByt = new byte[byt.length+1];
+  secondByt[0] = 1;
+  System.arraycopy(byt, 0, secondByt, 1, byt.length);
+  return new BigInteger(secondByt).toString(36);
+}
+```
+Decrypt some input:
+```JAVA
+public String Decrypt (String str) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
+  byte[] bytesDecrypted;
+
+  Cipher cipher = Cipher.getInstance("RSA");
+
+  cipher.init(Cipher.DECRYPT_MODE, this.KEY_PRIVATE);
+  bytesDecrypted = cipher.doFinal(stringToBytes(str));
+
+  return new String (bytesDecrypted);
 }
 ```
