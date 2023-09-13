@@ -20,6 +20,7 @@ For using this API specifically the use of **keys (Private/Public)**<br><br>
 First, you have to make two *get requests* to the API, one of them for the **private key** and the other for the **public key**:
 ```JAVA
 public class Getting {
+
   private final static String urlString = "http://localhost:8081/api/v1";
 
   public static String PRIVATE_KEY () {
