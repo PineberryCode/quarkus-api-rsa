@@ -86,7 +86,7 @@ public class Getting {
 
 - - -
 
-Subsequently, You can utilize the **private key** and **public key** storing it in a variable:
+Subsequently, You can utilize the **private key** and **public key** storing it in a variable in a new class:
 ```JAVA
 private String priv = Getting.PRIVATE_KEY();
 private String pub = Getting.PUBLIC_KEY();
