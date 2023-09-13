@@ -156,7 +156,6 @@ public class RSA {
     }
 
     public boolean isExists () {
-        /*Could be anything file */
         File any = new File (path_file_private);
 
         boolean status = any.isFile() ? true : false;
