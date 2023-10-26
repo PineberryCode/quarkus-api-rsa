@@ -43,4 +43,5 @@ nb-configuration.xml
 /.quarkus/cli/plugins/
 
 # API Project
+!/src/main/resources/keys/.gitkeep
 /src/main/resources/keys/**
